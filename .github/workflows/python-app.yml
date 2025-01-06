@@ -1,37 +1,29 @@
-name: Run Python Script
+name: CICD Pipeline
 
-# Trigger the workflow on push or pull request to the main branch
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
-# Define the jobs
 jobs:
-  run-python-script:
-    runs-on: ubuntu-latest  # Use the latest Ubuntu environment
-
+  build-and-deploy:
+    runs-on: ubuntu-latest
     steps:
-      # Step 1: Check out the repository
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      # Step 2: Set up Python
+      - name: Checkout code
+        uses: actions/checkout@v2
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v2
         with:
-          python-version: '3.9'  # Adjust the Python version as needed
-
-      # Step 3: Install dependencies (if your script requires any)
-      - name: Install Dependencies
+          python-version: '3.x'
+      - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip  # Upgrade pip
-          pip install -r requirements.txt      # Install dependencies from requirements.txt
-        if: fileExists('requirements.txt')    # Only run if requirements.txt exists
-
-      # Step 4: Run your Python script
-      - name: Run Python Script
-        run: python hello_world.py  # Replace with the path to your Python file
+          pip install -r requirements.txt
+      - name: Run Python script
+        run: |
+          python hello_world.py
+      - name: Serve HTML file
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          publish_branch: main
