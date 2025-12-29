@@ -1,5 +1,8 @@
 name: hello-world
 on: push
+  schedule:
+    - cron: '0 3 * * 0'
+  workflow_dispatch:
 jobs: 
   hello-world-job:
     runs-on: ubuntu-latest
